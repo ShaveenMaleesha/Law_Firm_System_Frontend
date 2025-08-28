@@ -4,8 +4,10 @@ import PageMeta from "../../components/common/PageMeta";
 import { useState, useEffect, useRef } from "react";
 import { LawyerDetailsResponse } from "../../services/lawyerService";
 import LawyerService from "../../services/lawyerService";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LawyerProfile() {
+  const { refreshUserData } = useAuth();
   const [lawyerDetails, setLawyerDetails] = useState<LawyerDetailsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -48,6 +50,9 @@ export default function LawyerProfile() {
       const response = await LawyerService.getMyDetails();
       console.log('Lawyer Details:', response);
       setLawyerDetails(response.lawyer);
+      
+      // Refresh user data in AuthContext to ensure consistency
+      await refreshUserData();
     } catch (err: any) {
       console.error('Error fetching lawyer details:', err);
     } finally {
@@ -151,8 +156,12 @@ export default function LawyerProfile() {
       const response = await LawyerService.updateMyDetailsWithImage(updateData, selectedImageFile || undefined);
       console.log('Update response:', response);
       
-      // Refresh the lawyer details
+      // Refresh the lawyer details and update AuthContext with latest data from API
       await fetchLawyerDetails();
+      
+      // Also refresh the auth context to ensure all user data is in sync with backend
+      await refreshUserData();
+      
       setIsEditing(false);
       setSelectedImageFile(null);
       

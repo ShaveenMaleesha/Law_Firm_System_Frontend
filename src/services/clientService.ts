@@ -26,6 +26,7 @@ export interface ClientDetailsResponse {
   email: string;
   contactNo: string;
   address: string;
+  profilePicture?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -112,6 +113,12 @@ class ClientService {
   // Create client (admin only)
   async createClient(data: CreateClientData): Promise<CreateClientResponse> {
     const response = await api.post('/clients', data);
+    return response.data;
+  }
+
+  // Get current client's own details (client only)
+  async getMyDetails(): Promise<{ message: string; client: ClientDetailsResponse }> {
+    const response = await api.get('/clients/me');
     return response.data;
   }
 }

@@ -31,11 +31,20 @@ export interface LawyerRegisterData {
 
 export interface User {
   id: string;
+  userId?: string;
   username?: string;
   name?: string;
   email?: string;
   role: 'admin' | 'client' | 'lawyer';
   practiceArea?: string;
+  profilePicture?: string;
+}
+
+export interface TokenDetails {
+  userId: string;
+  role: 'admin' | 'client' | 'lawyer';
+  username: string;
+  email: string;
 }
 
 export interface AuthResponse {
@@ -100,6 +109,15 @@ class AuthService {
     return localStorage.getItem('token');
   }
 
+  setTokenDetails(tokenDetails: TokenDetails): void {
+    localStorage.setItem('tokenDetails', JSON.stringify(tokenDetails));
+  }
+
+  getTokenDetails(): TokenDetails | null {
+    const tokenData = localStorage.getItem('tokenDetails');
+    return tokenData ? JSON.parse(tokenData) : null;
+  }
+
   setUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
   }
@@ -112,6 +130,7 @@ class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('tokenDetails');
   }
 
   isAuthenticated(): boolean {

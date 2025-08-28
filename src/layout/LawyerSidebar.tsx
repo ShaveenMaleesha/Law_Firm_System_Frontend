@@ -12,6 +12,8 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { useAuth } from "../context/AuthContext";
+import { useTokenInfo } from "../hooks/useTokenDetails";
 import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
@@ -63,6 +65,8 @@ const othersItems: NavItem[] = [];
 
 const LawyerSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { user } = useAuth();
+  const { username, email } = useTokenInfo();
   const location = useLocation();
 
   const [openSubmenu, setOpenSubmenu] = useState<{
@@ -327,7 +331,7 @@ const LawyerSidebar: React.FC = () => {
             <div className="flex items-center gap-x-3">
               <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700">
                 <img
-                  src="/images/user/user-01.png"
+                  src={user?.profilePicture || "/images/user/user-01.png"}
                   alt="User"
                   className="h-full w-full rounded-full object-cover"
                 />
@@ -338,10 +342,10 @@ const LawyerSidebar: React.FC = () => {
                 }`}
               >
                 <p className="text-sm font-medium text-gray-800 dark:text-white">
-                  Lawyer User
+                  {username || user?.name || "Lawyer User"}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  lawyer@example.com
+                  {email || user?.email || "lawyer@example.com"}
                 </p>
               </div>
               <button

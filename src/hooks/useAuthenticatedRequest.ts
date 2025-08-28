@@ -1,8 +1,9 @@
 import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
+import TokenUtils from '../services/tokenUtils';
 
 export const useAuthenticatedRequest = () => {
-  const { logout } = useAuth();
+  const { logout, tokenDetails } = useAuth();
 
   const makeRequest = async <T>(request: () => Promise<T>): Promise<T> => {
     try {
@@ -17,5 +18,19 @@ export const useAuthenticatedRequest = () => {
     }
   };
 
-  return { makeRequest, authService };
+  // Helper functions to access token details
+  const getUserId = () => tokenDetails?.userId || TokenUtils.getUserId();
+  const getUserRole = () => tokenDetails?.role || TokenUtils.getUserRole();
+  const getUsername = () => tokenDetails?.username || TokenUtils.getUsername();
+  const getUserEmail = () => tokenDetails?.email || TokenUtils.getUserEmail();
+
+  return { 
+    makeRequest, 
+    authService,
+    tokenDetails,
+    getUserId,
+    getUserRole,
+    getUsername,
+    getUserEmail
+  };
 };
